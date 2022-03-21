@@ -90,6 +90,44 @@ const appendFileAsync = async (filePath, data) => {
 
 const readAsyncFile = async (filePath) => {
     return new Promise((resolve, reject) => {
-      return fs.readFile()
+      return fs.readFile(filePath, {encoding: 'utf-8',}, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(data);
+      })
     });
 };
+
+// writeFileAsync(filePath1, 'Some data.')
+//   .then(() => appendFileAsync(filePath1, 'Some more test!'))
+//   .then(() => appendFileAsync(filePath1, 'And some more test again!'))
+//   .then(() => readAsyncFile(filePath1))
+//   .then(data => console.log(data))
+//   .catch((err) => console.log(err))
+
+const deleteAsyncFile = async (filePath) => {
+  return new Promise((resolve, reject) => {
+    return fs.rm(filePath, (err) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve();
+    })
+  });
+};
+
+// deleteAsyncFile(filePath1)
+//   .then(() => console.log('deleted'))
+
+//  TEST
+const text = process.env.TEXT || 'Some small text';
+
+// writeFileAsync(path.resolve(__dirname, 'test-test.txt'), text)
+//   .then(() => readAsyncFile(path.resolve(__dirname, 'test-test.txt')))
+//   .then((data) => {
+//     console.log(data)
+//     return data.split(' ').length;
+//   })
+//   .then(count => writeFileAsync(path.resolve(__dirname, 'test-test1.txt'), `Words: ${count}`))
+//   .then(() => deleteAsyncFile(path.resolve(__dirname, 'test-test.txt')))

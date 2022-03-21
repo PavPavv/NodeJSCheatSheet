@@ -3,7 +3,9 @@ const dotenv = require("dotenv");
 //  const processPart = require("./parts/process");
 //  const pathPart = require("./parts/path");
 //  const partUrl = require("./parts/url");
-const filesystem = require("./parts/filesystem");
+//  const filesystemPart = require("./parts/filesystem");
+//  const opSysPart = require("./parts/os");
+const eventsPart = require("./parts/events");
 
 dotenv.config();
 
