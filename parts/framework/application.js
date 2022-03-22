@@ -5,14 +5,27 @@ module.exports = class App {
   constructor() {
     this.emitter = new EventEmitter();
     this.server = this._createServer();
+    this.middlewares = [];
   }
 
   _createServer() {
     return http.createServer((req, res) => {
-      const emitted = this.emitter.emit(this._getRouteMask(req.path, res.method), req, res);
-      if (!emitted) {
-        res.end();
-      }
+      let body = "";
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        if (body) {
+          req.body = JSON.parse(body);
+        }
+
+        const emitted = this.emitter.emit(this._getRouteMask(req.url, req.method), req, res);
+        if (!emitted) {
+          res.end();
+        }
+      });
+
+
     });
   }
 
@@ -22,12 +35,12 @@ module.exports = class App {
 
   addRouter(router) {
     Object.keys(router.endpoints).forEach(path => {
-      const endpoint = router.endpoint[path];
+      const endpoint = router.endpoints[path];
 
       Object.keys(endpoint).forEach((method) => {
-        const handler = endpoint[method];
-
         this.emitter.on(this._getRouteMask(path, method), (req, res) => {
+          const handler = endpoint[method];
+          this.middlewares.forEach(middleware => middleware(req, res));
           handler(req, res);
         });
       });
@@ -36,5 +49,9 @@ module.exports = class App {
 
   listen(port, cb) {
     this.server.listen(port, cb);
+  }
+
+  use(middleware) {
+    this.middlewares.push(middleware);
   }
 }

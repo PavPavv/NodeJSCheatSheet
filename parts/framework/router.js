@@ -1,14 +1,14 @@
 module.exports = class Router {
   constructor() {
-    this.endpoint = {}
+    this.endpoints = {}
   }
 
   request(method = "GET", path, handler) {
-    if (!this.endpoint[path]) {
-      this.endpoint[path] = {};
+    if (!this.endpoints[path]) {
+      this.endpoints[path] = {};
     }
 
-    const endpoint = this.endpoint[path];
+    const endpoint = this.endpoints[path];
 
     if (endpoint[method]) {
       throw new Error(`[${method}] with path ${path} already exist`);
